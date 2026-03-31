@@ -1,36 +1,71 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Navbar from "../components/Navbar";
 
-export default function Login() {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const handleLogin = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        alert("Login successful");
+        window.location.href = "/dashboard";
+      } else {
+        alert("Invalid credentials");
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Server error");
+    }
+  };
 
   return (
     <>
       <Navbar />
-
-      <div className="flex justify-center mt-16">
-        <div className="w-96 p-6 border rounded-xl shadow bg-white">
-          <h2 className="text-xl font-bold mb-4">Login</h2>
+      <div className="flex justify-center mt-20">
+        <div className="bg-white shadow-lg p-8 rounded-xl w-80">
+          <h2 className="text-2xl mb-4">Login</h2>
 
           <input
-            className="w-full p-2 border rounded mb-3"
+            type="email"
             placeholder="Email"
+            className="border p-2 w-full mb-3"
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
 
           <input
-            className="w-full p-2 border rounded mb-3"
-            placeholder="Password"
             type="password"
+            placeholder="Password"
+            className="border p-2 w-full mb-3"
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          <button className="w-full bg-blue-600 text-white py-2 rounded-lg">
+          <button
+            onClick={handleLogin}
+            className="bg-blue-600 text-white w-full py-2 rounded-lg"
+          >
             Login
           </button>
         </div>
       </div>
     </>
   );
-}
+};
+
+export default Login;

@@ -1,35 +1,41 @@
-import React from "react";
 import Navbar from "../components/Navbar";
 import WorkoutCard from "../components/WorkoutCard";
-import DietCard from "../components/DietCard";
+import { useEffect, useState } from "react";
 
-export default function Dashboard() {
-  const sampleWorkout = {
-    name: "Upper Body Strength",
-    duration: 50,
-    exercises: ["Push-ups", "Pull-ups", "Dumbell Shoulder Press"],
-  };
+const Dashboard = () => {
+  const [workouts, setWorkouts] = useState([]);
 
-  const sampleMeal = {
-    title: "Paneer Bowl",
-    calories: 350,
-    protein: 34,
-    carbs: 12,
-    fat: 16,
-  };
+  useEffect(() => {
+    const fetchWorkouts = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await fetch("http://localhost:5000/api/workouts", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+        setWorkouts(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchWorkouts();
+  }, []);
 
   return (
     <>
       <Navbar />
-
-      <div className="p-6">
-        <h2 className="text-2xl font-bold mb-4">Your Dashboard</h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <WorkoutCard workout={sampleWorkout} />
-          <DietCard meal={sampleMeal} />
-        </div>
+      <div className="grid md:grid-cols-2 gap-6 p-10">
+        {workouts.map((workout) => (
+          <WorkoutCard key={workout._id} workout={workout} />
+        ))}
       </div>
     </>
   );
-}
+};
+
+export default Dashboard;

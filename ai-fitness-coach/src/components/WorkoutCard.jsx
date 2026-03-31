@@ -1,15 +1,12 @@
-import React from 'react';
+const WorkoutCard = ({ workout }) => {
+  return (
+    <div className="bg-white shadow-lg p-5 rounded-xl">
+      <h2 className="text-xl font-bold">{workout.name}</h2>
+      <p>Reps: {workout.reps}</p>
+      <p>Sets: {workout.sets}</p>
+      <p>Difficulty: {workout.difficulty}</p>
+    </div>
+  );
+};
 
-export default function WorkoutCard({workout}) {
-    return (
-        <div className="border rounded-xl p-4 shadow bg-white hover:shadow-lg transition">
-            <h2 className="font-bold text-lg">{workout.name}</h2>
-            <p className="text-sm text-gray-500">{workout.duration} mins</p>
-            <ul className="mt-2 text-sm">
-                {workout.exercises.map((ex,idx)=>(
-                    <li key={idx}>.{ex}</li>
-                ))}
-            </ul>
-        </div>
-    );
-}
+export default WorkoutCard;

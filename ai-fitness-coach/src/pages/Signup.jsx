@@ -1,36 +1,80 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Navbar from "../components/Navbar";
 
-export default function Signup() {
+const Signup = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const handleSignup = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data._id) {
+        alert("Signup successful");
+        window.location.href = "/login";
+      } else {
+        alert("Signup failed");
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Server error");
+    }
+  };
 
   return (
     <>
       <Navbar />
-
-      <div className="flex justify-center mt-16">
-        <div className="w-96 p-6 border rounded-xl shadow bg-gray">
-          <h2 className="text-xl font-bold mb-4">Create Account</h2>
+      <div className="flex justify-center mt-20">
+        <div className="bg-white shadow-lg p-8 rounded-xl w-80">
+          <h2 className="text-2xl mb-4">Sign Up</h2>
 
           <input
-            className="w-full p-2 border rounded mb-3"
+            type="text"
+            placeholder="Name"
+            className="border p-2 w-full mb-3"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+
+          <input
+            type="email"
             placeholder="Email"
+            className="border p-2 w-full mb-3"
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
 
           <input
-            className="w-full p-2 border rounded mb-3"
-            placeholder="Password"
             type="password"
+            placeholder="Password"
+            className="border p-2 w-full mb-3"
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          <button className="w-full bg-orange-600 text-white py-2 rounded-lg">
-            Sign Up
+          <button
+            onClick={handleSignup}
+            className="bg-blue-600 text-white w-full py-2 rounded-lg"
+          >
+            Register
           </button>
         </div>
       </div>
     </>
   );
-}
+};
+
+export default Signup;

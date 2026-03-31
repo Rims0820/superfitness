@@ -1,6 +1,5 @@
 const Diet = require("../models/Diet");
 
-// Create Diet
 exports.createDiet = async (req, res) => {
   try {
     const { title, calories, protein, carbs, fat } = req.body;
@@ -20,7 +19,6 @@ exports.createDiet = async (req, res) => {
   }
 };
 
-// Get All Diet Plans
 exports.getDiets = async (req, res) => {
   try {
     const diets = await Diet.find({ user: req.user._id });
@@ -30,7 +28,6 @@ exports.getDiets = async (req, res) => {
   }
 };
 
-// Delete Diet
 exports.deleteDiet = async (req, res) => {
   try {
     const diet = await Diet.findById(req.params.id);

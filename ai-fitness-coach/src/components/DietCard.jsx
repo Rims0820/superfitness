@@ -1,16 +1,51 @@
-import React from "react";
+import Navbar from "../components/Navbar";
+import DietCard from "../components/DietCard";
+import { useEffect, useState } from "react";
 
-export default function DietCard({ meal }) {
+const Diet = () => {
+  const [diets, setDiets] = useState([]);
+
+  useEffect(() => {
+    const fetchDiets = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await fetch("http://localhost:5000/api/diet", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+        setDiets(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    const DietCard = ({ meal }) => {
   return (
-    <div className="border rounded-lg p-4 shadow bg-white">
-      <h2 className="font-semibold text-lg">{meal.title}</h2>
-      <p className="text-black-600 text-sm">{meal.calories} calories</p>
-
-      <div className="mt-3">
-        <p className="text-sm">Protein: {meal.protein}g</p>
-        <p className="text-sm">Carbs: {meal.carbs}g</p>
-        <p className="text-sm">Fat: {meal.fat}g</p>
-      </div>
+    <div className="bg-white shadow-lg p-5 rounded-xl">
+      <h2 className="text-xl font-bold">{meal.name}</h2>
+      <p>Calories: {meal.calories}</p>
+      <p>Protein: {meal.protein}g</p>
+      <p>Carbs: {meal.carbs}g</p>
     </div>
   );
-}
+};
+
+    fetchDiets();
+  }, []);
+
+  return (
+    <>
+      <Navbar />
+      <div className="grid md:grid-cols-2 gap-6 p-10">
+        {diets.map((meal) => (
+          <DietCard key={meal._id} meal={meal} />
+        ))}
+      </div>
+    </>
+  );
+};
+
+export default Diet;

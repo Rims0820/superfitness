@@ -1,60 +1,63 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Navbar from "../components/Navbar";
 
-export default function ChatCoach() {
+const ChatCoach = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (!input) return;
 
-    const userMsg = { role: "user", content: input };
-    setMessages((prev) => [...prev, userMsg]);
-
-    // Placeholder AI response
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: "I am your AI fitness coach! 💪" },
-      ]);
-    }, 500);
-
+    const userMessage = { role: "user", text: input };
+    setMessages([...messages, userMessage]);
     setInput("");
+
+    const res = await fetch("http://localhost:5000/api/ai/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message: input }),
+    });
+
+    const data = await res.json();
+
+    const aiReply = {
+      role: "assistant",
+      text: data.reply,
+    };
+
+    setMessages((prev) => [...prev, aiReply]);
   };
 
   return (
     <>
       <Navbar />
-
-      <div className="p-6 max-w-2xl mx-auto">
-        <h2 className="text-xl font-bold mb-4">Chat with Your AI Coach</h2>
-
-        <div className="border rounded-xl p-4 h-[60vh] overflow-y-auto bg-white shadow">
-          {messages.map((m, index) => (
+      <div className="p-10">
+        <div className="bg-gray-100 h-96 p-5 overflow-y-auto mb-4 rounded-xl">
+          {messages.map((msg, index) => (
             <div
               key={index}
-              className={`my-2 p-2 rounded-lg ${
-                m.role === "user"
-                  ? "bg-blue-500 text-white ml-auto w-fit"
-                  : "bg-gray-200 w-fit"
+              className={`mb-2 ${
+                msg.role === "user" ? "text-right" : "text-left"
               }`}
             >
-              {m.content}
+              <span className="bg-blue-500 text-white px-3 py-1 rounded-lg">
+                {msg.text}
+              </span>
             </div>
           ))}
         </div>
 
-        <div className="mt-4 flex gap-2">
+        <div className="flex">
           <input
-            className="flex-grow border rounded-lg px-3 py-2"
-            placeholder="Ask me anything..."
+            className="border flex-1 p-2"
             value={input}
             onChange={(e) => setInput(e.target.value)}
           />
-
           <button
             onClick={sendMessage}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+            className="bg-blue-600 text-white px-4"
           >
             Send
           </button>
@@ -62,4 +65,6 @@ export default function ChatCoach() {
       </div>
     </>
   );
-}
+};
+
+export default ChatCoach;
