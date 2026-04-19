@@ -33,7 +33,7 @@ const Progress = () => {
     };
 
     fetchProgress();
-  }, []);
+  }, [token]);
 
   return (
     <>
