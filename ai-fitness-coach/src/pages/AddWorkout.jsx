@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { motion } from "framer-motion";
 import { FaDumbbell, FaLayerGroup, FaRedo, FaSignal, FaCheck } from "react-icons/fa";
 
 const AddWorkout = () => {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [reps, setReps] = useState("");
   const [sets, setSets] = useState("");
@@ -34,7 +36,7 @@ const AddWorkout = () => {
       const data = await res.json();
 
       if (res.ok) {
-        window.location.href = "/dashboard";
+        navigate("/dashboard");
       } else {
         alert(data.message || "Failed to add workout");
       }

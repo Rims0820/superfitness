@@ -20,7 +20,7 @@ const ChatCoach = () => {
   }, [messages]);
 
   const sendMessage = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || loading) return;
 
     const userMsg = { role: "user", text: input };
     setMessages((prev) => [...prev, userMsg]);
@@ -41,6 +41,7 @@ const ChatCoach = () => {
       setMessages((prev) => [...prev, aiMsg]);
     } catch (error) {
       console.error("Chat error:", error);
+      setMessages((prev) => [...prev, { role: "assistant", text: "Connection error. Please try again." }]);
     } finally {
       setLoading(false);
     }
@@ -62,7 +63,7 @@ const ChatCoach = () => {
         </header>
 
         <div className="flex-grow glass rounded-3xl border border-white/5 overflow-hidden flex flex-col mb-6">
-          <div className="flex-grow overflow-y-auto p-6 space-y-6">
+          <div className="flex-grow overflow-y-auto p-6 space-y-6" role="log" aria-live="polite">
             <AnimatePresence initial={false}>
               {messages.map((msg, i) => (
                 <motion.div
@@ -105,24 +106,30 @@ const ChatCoach = () => {
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="p-4 bg-white/5 border-t border-white/5">
+          <form
+            className="p-4 bg-white/5 border-t border-white/5"
+            onSubmit={(e) => {
+              e.preventDefault();
+              sendMessage();
+            }}
+          >
             <div className="relative flex items-center">
               <input
                 className="w-full bg-black/20 border border-white/10 rounded-2xl p-4 pr-14 focus:outline-none focus:border-primary/50 transition-colors font-medium"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                 placeholder="Ask about training, diet, or motivation..."
+                aria-label="Message to coach"
               />
               <button
-                onClick={sendMessage}
+                type="submit"
                 disabled={!input.trim() || loading}
                 className="absolute right-2 p-3 bg-primary text-white rounded-xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100"
               >
                 <FaPaperPlane />
               </button>
             </div>
-          </div>
+          </form>
         </div>
       </main>
     </div>
