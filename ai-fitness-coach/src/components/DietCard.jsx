@@ -1,58 +1,41 @@
-import Navbar from "../components/Navbar";
-import DietCard from "../components/DietCard";
-import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { FaUtensils, FaFire, FaEgg } from "react-icons/fa";
 
-
-const Diet = () => {
-  const [diets, setDiets] = useState([]);
-
-  useEffect(() => {
-    const fetchDiets = async () => {
-      try {
-        const token = localStorage.getItem("token");
-
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/diet`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const data = await res.json();
-        setDiets(data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    const DietCard = ({ meal }) => {
+const DietCard = ({ meal }) => {
   return (
-        <motion.div
-      whileHover={{ scale: 1.05 }}
-      className="bg-white p-5 rounded-2xl shadow-md hover:shadow-xl transition"
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      whileHover={{ y: -5 }}
+      className="glass p-6 rounded-3xl border border-white/5 relative overflow-hidden group"
     >
-      <h2 className="text-xl font-bold text-green-600 mb-2">
+      <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+        <FaUtensils className="text-6xl text-primary" />
+      </div>
+
+      <h2 className="text-xl font-bold uppercase tracking-tight mb-4 text-primary">
         {meal.name}
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-      <p className="text-gray-600">Calories: {meal.calories}</p>
-      <p className="text-gray-600">Protein: {meal.protein}g</p>
-      <p className="text-gray-600">Carbs: {meal.carbs}g</p>
+
+      <div className="space-y-3">
+        <div className="flex items-center gap-3 text-gray-400">
+          <FaFire className="text-orange-500/60" />
+          <span className="font-semibold text-white">{meal.calories}</span>
+          <span className="text-xs uppercase tracking-widest font-bold">Calories</span>
+        </div>
+        <div className="flex items-center gap-3 text-gray-400">
+          <FaEgg className="text-secondary/60" />
+          <span className="font-semibold text-white">{meal.protein}g</span>
+          <span className="text-xs uppercase tracking-widest font-bold">Protein</span>
+        </div>
+        <div className="flex items-center gap-3 text-gray-400">
+          <FaUtensils className="text-accent/60" />
+          <span className="font-semibold text-white">{meal.carbs}g</span>
+          <span className="text-xs uppercase tracking-widest font-bold">Carbs</span>
+        </div>
+      </div>
     </motion.div>
   );
 };
 
-    fetchDiets();
-  }, []);
-
-  return (
-    <>
-      <Navbar />
-      <div className="grid md:grid-cols-2 gap-6 p-10">
-        {diets.map((meal) => (
-          <DietCard key={meal._id} meal={meal} />
-        ))}
-      </div>
-    </>
-  );
-};
-
-export default Diet;
+export default DietCard;

@@ -6,6 +6,8 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import ChatCoach from './pages/ChatCoach'
 import AddWorkout from './pages/AddWorkout'
+import Diet from './pages/Diet'
+import Progress from './pages/Progress'
 
 function App() {
   return (
@@ -17,6 +19,8 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/chat" element={<ChatCoach />} />
         <Route path="/add-workout" element={<AddWorkout />} />
+        <Route path="/diet" element={<Diet />} />
+        <Route path="/progress" element={<Progress />} />
       </Routes>
     </Router>
   )
